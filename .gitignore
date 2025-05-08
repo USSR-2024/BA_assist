@@ -1,0 +1,67 @@
+# Зависимости
+/node_modules
+/.pnp
+.pnp.js
+parser/node_modules/
+# Тестирование
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Продакшн
+/build
+
+# Разное
+.DS_Store
+*.pem
+
+# Отладка
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Локальные env файлы
+.env*.local
+.env
+.env.development
+.env.test
+.env.production
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Ключи и приватные данные
+/keys
+keys/
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+
+# Logs
+/logs
+*.log
+
+# Папки Docker
+data/
+
+# Тестовые файлы
+test-files/
+uploads/
+
+# Временные файлы OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.directory
+
+**/.claude/settings.local.json

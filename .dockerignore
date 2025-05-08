@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.env
+.env.*
+*.log
+.git
+.github
+.gitignore
+README.md
+TROUBLESHOOTING.md
+CLAUDE.md
+.next
+.vscode
+.idea
+keys/*
+!keys/.gitkeep

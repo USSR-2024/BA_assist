@@ -1,0 +1,29 @@
+{
+  "name": "baassist-parser",
+  "version": "1.0.0",
+  "description": "Сервис для обработки и извлечения текста из документов",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "axios": "^1.6.5",
+    "chardet": "^2.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "encoding": "^0.1.13",
+    "express": "^4.18.2",
+    "iconv-lite": "^0.6.3",
+    "jschardet": "^3.1.4",
+    "mammoth": "^1.6.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1",
+    "string-to-arraybuffer": "^1.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

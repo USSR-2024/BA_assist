@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Generate Prisma client
+      run: npx prisma generate
+    
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Build application
+      run: npm run build
+    
+    # Здесь можно добавить шаг с тестами, когда они будут написаны
+    # - name: Run tests
+    #   run: npm test
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to Vercel
+      # В полной версии здесь бы использовался официальный action от Vercel
+      # или другого провайдера для деплоя
+      run: |
+        echo "Deploying to Vercel..."
+        # Здесь будет добавлена команда деплоя в продакшн
+        # например, с использованием Vercel CLI
+        echo "Deployed successfully!"

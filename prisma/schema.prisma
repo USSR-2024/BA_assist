@@ -1,0 +1,207 @@
+// This is your Prisma schema file,
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  role        Role     @default(MEMBER)
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  projects    Project[] @relation("ProjectUsers")
+  aiSettings  Json?    // Для хранения настроек ИИ (API ключ, модель и т.д.)
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status      ProjectStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  ownerId     String   // FK→User (creator)
+  users       User[]   @relation("ProjectUsers")
+  files       File[]
+  tasks       Task[]
+  summary     String?  // AI‑генерируемое описание
+  chatMessages ChatMessage[]
+  projectArtifacts ProjectArtifact[]
+  
+  // Мини-интервью и дорожная карта
+  sponsor         String?
+  businessOwner   String?
+  businessNeed    String?
+  successMetrics  String?
+  scopeAreas      String?
+  outOfScope      String?
+  deliverables    String?
+  constraints     String?
+  targetDate      DateTime?
+  durationBucket  String?
+  coreTeamSize    String?
+  processMaturity String?
+  preferredStyle  String?
+  riskTolerance   String?
+  initialArtifacts String?
+  storageLinks    String?
+  notes           String?
+  
+  // Результаты анализа интервью
+  framework       String?
+  roadmap         Json?
+  storageRules    String?
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  project   Project  @relation(fields:[projectId], references:[id])
+  projectId Int
+  name      String
+  gcsPath   String   // incoming/... или processed/...
+  size      Int
+  status    FileStatus @default(UPLOADED) // ENUM: UPLOADED | PARSED
+  text      String?   // результат mammoth
+  uploadedAt DateTime @default(now())
+  
+  // Связь с артефактами
+  artifactId    String?
+  artifactStage ArtifactStage?
+  isArtifact    Boolean? @default(false)
+  metadata      Json?
+  
+  // Отношение к проектным артефактам
+  projectArtifacts ProjectArtifact[]
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  project   Project  @relation(fields:[projectId], references:[id])
+  title     String
+  status    TaskStatus @default(TODO) // TODO | IN_PROGRESS | DONE
+  priority  Int       // 1–3
+  dueDate   DateTime?
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  projectId Int
+  project   Project  @relation(fields:[projectId], references:[id])
+  userId    String
+  content   String
+  timestamp DateTime @default(now())
+}
+
+model GlossaryTerm {
+  id         Int      @id @default(autoincrement())
+  term       String   @unique
+  definition String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Новая модель для бизнес-процессов
+model BusinessProcess {
+  id          String            @id @default(uuid())
+  title       String
+  description String?
+  parentId    String?
+  parent      BusinessProcess?  @relation("ProcessHierarchy", fields: [parentId], references: [id])
+  children    BusinessProcess[] @relation("ProcessHierarchy")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+enum Role {
+  OWNER
+  MEMBER
+  GUEST
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum FileStatus {
+  UPLOADED
+  PARSED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum ArtifactStage {
+  INITIATION_DISCOVERY
+  ANALYSIS_MODELING
+  SOLUTION_DESIGN_PLANNING
+  MONITORING_EVALUATION
+}
+
+enum ArtifactStatus {
+  NOT_STARTED
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  OBSOLETE
+}
+
+enum ArtifactFormat {
+  DOCX
+  XLSX
+  PDF
+  BPMN
+  PNG
+  OTHER
+}
+
+model ArtifactCatalog {
+  id            String   @id @unique
+  enName        String
+  ruName        String
+  babokArea     String
+  stage         String
+  description   String
+  minInputs     String?
+  format        String
+  doneCriteria  String
+  keywords      String[]
+  dependsOn     String?
+  providesFor   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Отношения
+  projectArtifacts ProjectArtifact[]
+}
+
+model ProjectArtifact {
+  id             String         @id @default(uuid())
+  projectId      Int
+  project        Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  artifactId     String
+  artifact       ArtifactCatalog @relation(fields: [artifactId], references: [id])
+  fileId         Int?
+  file           File?          @relation(fields: [fileId], references: [id])
+  status         ArtifactStatus @default(NOT_STARTED)
+  assignedToUserId String?
+  version        Int            @default(1)
+  stage          ArtifactStage
+  format         ArtifactFormat
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  
+  @@index([projectId])
+  @@index([artifactId])
+  @@index([fileId])
+}
