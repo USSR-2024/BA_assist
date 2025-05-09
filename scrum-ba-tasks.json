@@ -1,0 +1,148 @@
+{
+  "tasks": [
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM1",
+      "taskId": "SCRUM-PB-01",
+      "name": "Product Backlog Creation",
+      "ruName": "Создание бэклога продукта",
+      "description": "Identify and document user stories and requirements for the product backlog.",
+      "ruDescription": "Определение и документирование пользовательских историй и требований для бэклога продукта.",
+      "estimatedHours": 12,
+      "priority": "HIGH",
+      "artifactId": "PROD-BL"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM1",
+      "taskId": "SCRUM-PB-02",
+      "name": "User Story Refinement",
+      "ruName": "Уточнение пользовательских историй",
+      "description": "Refine user stories to ensure they are clear, sized appropriately, and ready for sprint planning.",
+      "ruDescription": "Уточнение пользовательских историй для обеспечения их ясности, правильного размера и готовности к планированию спринта.",
+      "estimatedHours": 8,
+      "priority": "HIGH",
+      "artifactId": "US-DOCS"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM1",
+      "taskId": "SCRUM-PB-03",
+      "name": "Backlog Prioritization",
+      "ruName": "Приоритезация бэклога",
+      "description": "Work with Product Owner to prioritize backlog items based on business value and dependencies.",
+      "ruDescription": "Работа с владельцем продукта для приоритезации элементов бэклога на основе бизнес-ценности и зависимостей.",
+      "estimatedHours": 6,
+      "priority": "HIGH",
+      "artifactId": "PRI-BL"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM2",
+      "taskId": "SCRUM-SP-01",
+      "name": "Sprint Planning Preparation",
+      "ruName": "Подготовка к планированию спринта",
+      "description": "Prepare high-priority backlog items for sprint planning by ensuring acceptance criteria are clear.",
+      "ruDescription": "Подготовка элементов бэклога с высоким приоритетом к планированию спринта, обеспечивая ясность критериев приемки.",
+      "estimatedHours": 5,
+      "priority": "HIGH",
+      "artifactId": "SP-PLAN"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM2",
+      "taskId": "SCRUM-SP-02",
+      "name": "Sprint Backlog Definition",
+      "ruName": "Определение бэклога спринта",
+      "description": "Work with the Scrum team to define the sprint backlog based on team capacity and priorities.",
+      "ruDescription": "Работа с командой Scrum для определения бэклога спринта на основе возможностей команды и приоритетов.",
+      "estimatedHours": 4,
+      "priority": "HIGH",
+      "artifactId": "SPR-BL"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM3",
+      "taskId": "SCRUM-SD-01",
+      "name": "Story Clarification",
+      "ruName": "Уточнение историй",
+      "description": "Clarify story requirements with the development team during sprint execution.",
+      "ruDescription": "Уточнение требований историй с командой разработки во время выполнения спринта.",
+      "estimatedHours": 6,
+      "priority": "MEDIUM",
+      "artifactId": "US-DETAILS"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM3",
+      "taskId": "SCRUM-SD-02",
+      "name": "Acceptance Criteria Verification",
+      "ruName": "Проверка критериев приемки",
+      "description": "Review and verify that development work meets acceptance criteria throughout the sprint.",
+      "ruDescription": "Просмотр и проверка соответствия разработки критериям приемки на протяжении всего спринта.",
+      "estimatedHours": 8,
+      "priority": "HIGH",
+      "artifactId": "ACC-VERIF"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM3",
+      "taskId": "SCRUM-SD-03",
+      "name": "Daily Scrum Participation",
+      "ruName": "Участие в ежедневном Скраме",
+      "description": "Participate in daily stand-up meetings to address questions and remove impediments related to requirements.",
+      "ruDescription": "Участие в ежедневных стендап-встречах для решения вопросов и устранения препятствий, связанных с требованиями.",
+      "estimatedHours": 5,
+      "priority": "MEDIUM",
+      "artifactId": "DAILY-LOG"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM4",
+      "taskId": "SCRUM-SR-01",
+      "name": "Sprint Review Preparation",
+      "ruName": "Подготовка к обзору спринта",
+      "description": "Prepare for the sprint review by organizing demos and mapping completed stories to business value.",
+      "ruDescription": "Подготовка к обзору спринта путем организации демонстраций и связывания завершенных историй с бизнес-ценностью.",
+      "estimatedHours": 4,
+      "priority": "HIGH",
+      "artifactId": "SR-PREP"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM4",
+      "taskId": "SCRUM-SR-02",
+      "name": "Stakeholder Feedback Collection",
+      "ruName": "Сбор обратной связи от заинтересованных сторон",
+      "description": "Collect and document feedback from stakeholders during the sprint review.",
+      "ruDescription": "Сбор и документирование обратной связи от заинтересованных сторон во время обзора спринта.",
+      "estimatedHours": 3,
+      "priority": "MEDIUM",
+      "artifactId": "STK-FEED"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM5",
+      "taskId": "SCRUM-RT-01",
+      "name": "Sprint Retrospective Participation",
+      "ruName": "Участие в ретроспективе спринта",
+      "description": "Participate in the sprint retrospective to identify improvements in the requirements process.",
+      "ruDescription": "Участие в ретроспективе спринта для выявления улучшений в процессе работы с требованиями.",
+      "estimatedHours": 3,
+      "priority": "MEDIUM",
+      "artifactId": "RETRO-DOC"
+    },
+    {
+      "frameworkId": "FR-SCRUM-BA",
+      "phaseId": "SCRUM5",
+      "taskId": "SCRUM-RT-02",
+      "name": "Product Backlog Refinement",
+      "ruName": "Уточнение бэклога продукта",
+      "description": "Update the product backlog based on sprint outcomes and stakeholder feedback.",
+      "ruDescription": "Обновление бэклога продукта на основе результатов спринта и обратной связи от заинтересованных сторон.",
+      "estimatedHours": 6,
+      "priority": "HIGH",
+      "artifactId": "BL-UPDATE"
+    }
+  ]
+}

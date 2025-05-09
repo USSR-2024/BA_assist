@@ -13,7 +13,9 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "node prisma/seed.js",
     "db:reset": "prisma migrate reset --force",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "frameworks:import": "node scripts/import-frameworks.js",
+    "frameworks:seed": "node scripts/seed-frameworks.js"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",

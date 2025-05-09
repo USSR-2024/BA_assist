@@ -1,0 +1,309 @@
+{
+  "frameworks": [
+    {
+      "id": "FR-MVP",
+      "name": "MVP Fast-Track",
+      "ruName": "Быстрый запуск MVP",
+      "description": "60-day Lean-Scrum цикл: Discovery → Build → Pilot.",
+      "ruDescription": "60-дневный Lean-Scrum цикл: Исследование → Разработка → Пилот.",
+      "methodologyTag": ["agile", "lean"],
+      "suitabilityCriteria": {
+        "durationMonthsMax": 3,
+        "riskTolerance": ["Medium", "High"]
+      },
+      "phases": [
+        { 
+          "id": "P1",
+          "order": 1,
+          "name": "Discovery",
+          "ruName": "Исследование", 
+          "description": "Initial research and requirements gathering",
+          "ruDescription": "Исследование потребностей и сбор первичных требований",
+          "durationWeeks": 2
+        },
+        { 
+          "id": "P2",
+          "order": 2,
+          "name": "Build MVP",
+          "ruName": "Разработка MVP", 
+          "description": "Fast development of core features",
+          "ruDescription": "Быстрая разработка основных функций",
+          "durationWeeks": 5
+        },
+        { 
+          "id": "P3",
+          "order": 3,
+          "name": "Pilot & Evaluate",
+          "ruName": "Пилот и оценка", 
+          "description": "Controlled deployment and feedback collection",
+          "ruDescription": "Контролируемое внедрение и сбор обратной связи",
+          "durationWeeks": 1
+        }
+      ],
+      "isDefault": true,
+      "isSystem": true,
+      "isCustom": false
+    },
+    {
+      "id": "FR-DSPRINT",
+      "name": "Design Sprint 5-Day",
+      "ruName": "5-дневный Дизайн-спринт",
+      "description": "Google Design Sprint для быстрого UX/PoC",
+      "ruDescription": "Google Design Sprint для быстрого создания прототипа UX и проверки концепции",
+      "methodologyTag": ["design", "sprint"],
+      "suitabilityCriteria": {
+        "durationMonthsMax": 1,
+        "riskTolerance": ["High"]
+      },
+      "phases": [
+        { 
+          "id": "DS1",
+          "order": 1,
+          "name": "Understand",
+          "ruName": "Понимание",
+          "description": "Understand the problem and identify opportunities",
+          "ruDescription": "Понимание проблемы и определение возможностей",
+          "durationWeeks": 1
+        },
+        { 
+          "id": "DS2",
+          "order": 2,
+          "name": "Sketch",
+          "ruName": "Эскизы", 
+          "description": "Create multiple solution sketches",
+          "ruDescription": "Создание нескольких вариантов решения в виде эскизов",
+          "durationWeeks": 1
+        },
+        { 
+          "id": "DS3",
+          "order": 3,
+          "name": "Decide / Prototype / Test",
+          "ruName": "Выбор / Прототип / Тест", 
+          "description": "Choose solution, build prototype and test with users",
+          "ruDescription": "Выбор решения, создание прототипа и тестирование с пользователями",
+          "durationWeeks": 1
+        }
+      ],
+      "isDefault": false,
+      "isSystem": true,
+      "isCustom": false
+    },
+    {
+      "id": "FR-PMBLITE",
+      "name": "PMBOK-Lite",
+      "ruName": "PMBOK упрощенный",
+      "description": "Водопад с урезанным набором результатов",
+      "ruDescription": "Упрощенная водопадная методология с сокращенным набором результатов",
+      "methodologyTag": ["waterfall"],
+      "suitabilityCriteria": {
+        "durationMonthsMax": 6,
+        "riskTolerance": ["Low"]
+      },
+      "phases": [
+        { 
+          "id": "PL1",
+          "order": 1,
+          "name": "Initiate",
+          "ruName": "Инициация", 
+          "description": "Project initiation and chartering",
+          "ruDescription": "Инициация проекта и формирование устава",
+          "durationWeeks": 2
+        },
+        { 
+          "id": "PL2",
+          "order": 2,
+          "name": "Plan",
+          "ruName": "Планирование", 
+          "description": "Detailed planning of all aspects",
+          "ruDescription": "Детальное планирование всех аспектов проекта",
+          "durationWeeks": 4
+        },
+        { 
+          "id": "PL3",
+          "order": 3,
+          "name": "Execute",
+          "ruName": "Выполнение", 
+          "description": "Implementation and monitoring",
+          "ruDescription": "Реализация и мониторинг проекта",
+          "durationWeeks": 8
+        },
+        { 
+          "id": "PL4",
+          "order": 4,
+          "name": "Close",
+          "ruName": "Закрытие", 
+          "description": "Project closure and handover",
+          "ruDescription": "Закрытие проекта и передача результатов",
+          "durationWeeks": 1
+        }
+      ],
+      "isDefault": false,
+      "isSystem": true,
+      "isCustom": false
+    },
+    {
+      "id": "FR-SCRUMBA",
+      "name": "Scrum-BA Track",
+      "ruName": "Scrum для бизнес-анализа",
+      "description": "Разработка продукта с встроенными BA-тасками",
+      "ruDescription": "Адаптация Scrum с интегрированными задачами бизнес-анализа",
+      "methodologyTag": ["agile", "scrum"],
+      "suitabilityCriteria": {
+        "durationMonthsMax": 12,
+        "riskTolerance": ["Medium"]
+      },
+      "phases": [
+        { 
+          "id": "SB1",
+          "order": 1,
+          "name": "Sprint 0 – Foundations",
+          "ruName": "Спринт 0 – Фундамент", 
+          "description": "Initial setup and backlog creation",
+          "ruDescription": "Начальная настройка и создание бэклога",
+          "durationWeeks": 2
+        },
+        { 
+          "id": "SB2",
+          "order": 2,
+          "name": "Sprints 1-N",
+          "ruName": "Спринты 1-N", 
+          "description": "Iterative development sprints",
+          "ruDescription": "Итеративные спринты разработки",
+          "durationWeeks": 2
+        }
+      ],
+      "isDefault": false,
+      "isSystem": true,
+      "isCustom": false
+    },
+    {
+      "id": "FR-BPMRE",
+      "name": "BPM Re-engineering",
+      "ruName": "Реинжиниринг бизнес-процессов",
+      "description": "Реинжиниринг сквозного процесса (Hammer)",
+      "ruDescription": "Методология комплексного реинжиниринга бизнес-процессов по Хаммеру",
+      "methodologyTag": ["bpm", "re"],
+      "suitabilityCriteria": {
+        "durationMonthsMax": 9,
+        "riskTolerance": ["Low", "Medium"]
+      },
+      "phases": [
+        { 
+          "id": "BR1",
+          "order": 1,
+          "name": "Current State Analysis",
+          "ruName": "Анализ текущего состояния", 
+          "description": "Analysis of existing processes",
+          "ruDescription": "Анализ существующих процессов",
+          "durationWeeks": 3
+        },
+        { 
+          "id": "BR2",
+          "order": 2,
+          "name": "Future State Design",
+          "ruName": "Проектирование целевого состояния", 
+          "description": "Design of optimized processes",
+          "ruDescription": "Проектирование оптимизированных процессов",
+          "durationWeeks": 4
+        },
+        { 
+          "id": "BR3",
+          "order": 3,
+          "name": "Implementation",
+          "ruName": "Внедрение", 
+          "description": "Implementation and change management",
+          "ruDescription": "Внедрение и управление изменениями",
+          "durationWeeks": 6
+        }
+      ],
+      "isDefault": false,
+      "isSystem": true,
+      "isCustom": false
+    },
+    {
+      "id": "FR-LEAN6",
+      "name": "Lean / Six Sigma (DMAIC)",
+      "ruName": "Lean / Шесть сигм (DMAIC)",
+      "description": "Оптимизация и снижение вариативности",
+      "ruDescription": "Методология оптимизации процессов и снижения вариативности",
+      "methodologyTag": ["lean", "sixsigma"],
+      "suitabilityCriteria": {
+        "durationMonthsMax": 6,
+        "riskTolerance": ["Low"]
+      },
+      "phases": [
+        { 
+          "id": "L1",
+          "order": 1,
+          "name": "Define",
+          "ruName": "Определение", 
+          "description": "Define the problem and objectives",
+          "ruDescription": "Определение проблемы и целей",
+          "durationWeeks": 2
+        },
+        { 
+          "id": "L2",
+          "order": 2,
+          "name": "Measure",
+          "ruName": "Измерение", 
+          "description": "Measure current process performance",
+          "ruDescription": "Измерение текущей производительности процесса",
+          "durationWeeks": 3
+        },
+        { 
+          "id": "L3",
+          "order": 3,
+          "name": "Analyse",
+          "ruName": "Анализ", 
+          "description": "Analyze causes of problems",
+          "ruDescription": "Анализ причин проблем",
+          "durationWeeks": 3
+        },
+        { 
+          "id": "L4",
+          "order": 4,
+          "name": "Improve",
+          "ruName": "Улучшение", 
+          "description": "Implement improvements",
+          "ruDescription": "Внедрение улучшений",
+          "durationWeeks": 4
+        },
+        { 
+          "id": "L5",
+          "order": 5,
+          "name": "Control",
+          "ruName": "Контроль", 
+          "description": "Ensure sustainable results",
+          "ruDescription": "Обеспечение устойчивости результатов",
+          "durationWeeks": 2
+        }
+      ],
+      "isDefault": false,
+      "isSystem": true,
+      "isCustom": false
+    }
+  ],
+  "universalPhases": [
+    { 
+      "id": "UXR",
+      "name": "UX Research",
+      "ruName": "Исследование пользовательского опыта",
+      "description": "Research and analysis of user experience",
+      "ruDescription": "Исследование и анализ пользовательского опыта"
+    },
+    { 
+      "id": "SEC",
+      "name": "Security",
+      "ruName": "Безопасность",
+      "description": "Security assessment and implementation",
+      "ruDescription": "Оценка и реализация мер безопасности"
+    },
+    { 
+      "id": "OPS",
+      "name": "Operations",
+      "ruName": "Операционная деятельность",
+      "description": "Operational support and maintenance",
+      "ruDescription": "Операционная поддержка и сопровождение"
+    }
+  ]
+}

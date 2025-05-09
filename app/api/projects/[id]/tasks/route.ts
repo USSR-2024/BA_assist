@@ -35,15 +35,100 @@ export async function GET(
       )
     }
     
-    // Получаем задачи проекта
-    const tasks = await prisma.task.findMany({
+    // Получаем обычные задачи проекта
+    const standardTasks = await prisma.task.findMany({
       where: { projectId },
       orderBy: [
         { priority: 'desc' }
       ]
     })
-    
-    return NextResponse.json({ tasks }, { status: 200 })
+
+    // Получаем задачи из дорожной карты проекта
+    const projectRoadmaps = await prisma.projectRoadmap.findMany({
+      where: {
+        projectId,
+        isActive: true
+      },
+      include: {
+        phases: {
+          include: {
+            tasks: {
+              include: {
+                artifactLinks: {
+                  include: {
+                    projectArtifact: {
+                      include: {
+                        artifact: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    // Преобразуем задачи дорожной карты в формат, совместимый с обычными задачами
+    let roadmapTasks = []
+
+    if (projectRoadmaps.length > 0) {
+      const flattenedTasks = []
+
+      // Извлекаем все задачи из всех фаз всех дорожных карт
+      for (const roadmap of projectRoadmaps) {
+        for (const phase of roadmap.phases) {
+          for (const task of phase.tasks) {
+            flattenedTasks.push({
+              ...task,
+              phaseName: phase.name,
+              phaseId: phase.id,
+              roadmapId: roadmap.id
+            })
+          }
+        }
+      }
+
+      // Преобразуем формат задач дорожной карты в формат, совместимый с обычными задачами
+      roadmapTasks = flattenedTasks.map(task => ({
+        id: task.id,
+        title: task.ruName || task.name || 'Без названия',
+        status: task.status || 'TODO',
+        priority: task.priority || 2,
+        dueDate: task.dueDate,
+        description: task.ruDescription || task.description || '',
+        estimatedHours: task.estimatedHours,
+        actualHours: task.actualHours,
+        assignedToUserId: task.assignedToUserId,
+        // Дополнительные поля для задач дорожной карты
+        phaseId: task.phaseId,
+        phaseName: task.phaseName,
+        roadmapId: task.roadmapId,
+        frameworkTaskId: task.frameworkTaskId,
+        isRoadmapTask: true,
+        artifactLinks: task.artifactLinks ? task.artifactLinks.filter(link =>
+          link && link.projectArtifact && link.projectArtifact.artifact
+        ).map(link => ({
+          id: link.id,
+          artifact: {
+            id: link.projectArtifact.artifactId,
+            name: link.projectArtifact.artifact ? link.projectArtifact.artifact.enName : 'Неизвестный артефакт'
+          }
+        })) : []
+      }))
+    }
+
+    // Преобразуем обычные задачи, добавляя признак, что это не задача дорожной карты
+    const formattedStandardTasks = standardTasks.map(task => ({
+      ...task,
+      isRoadmapTask: false
+    }))
+
+    // Объединяем два массива задач
+    const allTasks = [...formattedStandardTasks, ...roadmapTasks]
+
+    return NextResponse.json({ tasks: allTasks }, { status: 200 })
   } catch (error) {
     console.error('Ошибка получения задач:', error)
     return NextResponse.json(

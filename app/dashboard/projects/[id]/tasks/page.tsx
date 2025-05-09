@@ -3,13 +3,31 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
+import Link from 'next/link'
 
 interface Task {
-  id: number
+  id: string | number
   title: string
   status: 'TODO' | 'IN_PROGRESS' | 'DONE'
   priority: number
   dueDate: string | null
+  description?: string
+  estimatedHours?: number
+  actualHours?: number
+  assignedToUserId?: string
+  // Поля для задач дорожной карты
+  isRoadmapTask?: boolean
+  phaseId?: string
+  phaseName?: string
+  roadmapId?: string
+  frameworkTaskId?: string
+  artifactLinks?: Array<{
+    id: string
+    artifact: {
+      id: string
+      name: string
+    }
+  }>
 }
 
 export default function TasksPage() {
@@ -26,6 +44,13 @@ export default function TasksPage() {
   const [newTaskDueDate, setNewTaskDueDate] = useState('')
   const [isAddingTask, setIsAddingTask] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [showRoadmapTasks, setShowRoadmapTasks] = useState(true)
+  const [selectedPhase, setSelectedPhase] = useState<string>('all')
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editedTask, setEditedTask] = useState<Partial<Task>>({})
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (projectId) {
@@ -112,22 +137,44 @@ export default function TasksPage() {
     }
   }
 
-  const updateTaskStatus = async (taskId: number, newStatus: 'TODO' | 'IN_PROGRESS' | 'DONE') => {
+  const updateTaskStatus = async (taskId: string | number, newStatus: 'TODO' | 'IN_PROGRESS' | 'DONE') => {
     try {
+      // Определяем, является ли это задачей дорожной карты или обычной задачей
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) {
+        throw new Error('Задача не найдена');
+      }
+      
       // Оптимистично обновляем UI сразу
       setTasks(tasks.map(task => 
         task.id === taskId ? { ...task, status: newStatus } : task
       ))
       
-      const res = await fetch(`/api/tasks/${taskId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          status: newStatus,
-        }),
-      })
+      let res;
+      
+      if (task.isRoadmapTask) {
+        // Если это задача дорожной карты, используем новый API-эндпоинт
+        res = await fetch(`/api/roadmap-tasks/${taskId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        });
+      } else {
+        // Если это обычная задача, используем старый API-эндпоинт
+        res = await fetch(`/api/tasks/${taskId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        });
+      }
       
       if (!res.ok) {
         throw new Error('Ошибка обновления задачи')
@@ -160,14 +207,146 @@ export default function TasksPage() {
     const newStatus = destination.droppableId as 'TODO' | 'IN_PROGRESS' | 'DONE'
     
     // Get the task id from the draggableId
-    const taskId = parseInt(draggableId.split('-')[1])
+    const taskIdStr = draggableId.split('-')[1]
+    
+    // Определяем тип задачи по формату ID
+    // Если ID содержит только цифры, то это обычная задача (id: number)
+    // В противном случае это задача дорожной карты (id: string в формате UUID)
+    const taskId = /^\d+$/.test(taskIdStr) ? parseInt(taskIdStr) : taskIdStr
     
     // Make API call to update the task status
     updateTaskStatus(taskId, newStatus)
   }
 
+  // Обработчик нажатия на задачу
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setEditedTask({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      dueDate: task.dueDate,
+      estimatedHours: task.estimatedHours,
+      actualHours: task.actualHours
+    });
+    setIsEditMode(false);
+    setIsTaskModalOpen(true);
+  };
+
+  // Обработчик закрытия модального окна
+  const handleCloseModal = () => {
+    setIsTaskModalOpen(false);
+    setSelectedTask(null);
+    setEditedTask({});
+    setIsEditMode(false);
+  };
+
+  // Обработчик переключения в режим редактирования
+  const handleEditMode = () => {
+    setIsEditMode(true);
+  };
+
+  // Обработчик изменения полей задачи
+  const handleTaskFieldChange = (field: string, value: any) => {
+    setEditedTask({
+      ...editedTask,
+      [field]: value
+    });
+  };
+
+  // Обработчик сохранения изменений задачи
+  const handleSaveTask = async () => {
+    if (!selectedTask) return;
+
+    setIsSaving(true);
+
+    try {
+      // Определяем, является ли это задачей дорожной карты или обычной задачей
+      const isRoadmapTask = selectedTask.isRoadmapTask;
+
+      // Формируем данные для обновления
+      const updateData = {
+        title: editedTask.title,
+        description: editedTask.description,
+        status: editedTask.status,
+        priority: editedTask.priority,
+        dueDate: editedTask.dueDate,
+        estimatedHours: editedTask.estimatedHours,
+        actualHours: editedTask.actualHours
+      };
+
+      // Выполняем запрос к соответствующему API
+      let res;
+      if (isRoadmapTask) {
+        res = await fetch(`/api/roadmap-tasks/${selectedTask.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updateData)
+        });
+      } else {
+        res = await fetch(`/api/tasks/${selectedTask.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updateData)
+        });
+      }
+
+      if (!res.ok) {
+        throw new Error('Ошибка обновления задачи');
+      }
+
+      // Обновляем состояние задачи в интерфейсе
+      setTasks(tasks.map(task =>
+        task.id === selectedTask.id ? { ...task, ...updateData } : task
+      ));
+
+      // Выходим из режима редактирования
+      setIsEditMode(false);
+
+      // Обновляем выбранную задачу
+      setSelectedTask({ ...selectedTask, ...updateData });
+
+    } catch (error) {
+      console.error('Ошибка при обновлении задачи:', error);
+      alert('Не удалось обновить задачу. Пожалуйста, попробуйте еще раз.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Получить уникальные фазы из задач дорожной карты
+  const getUniquePhases = () => {
+    const phases = tasks
+      .filter(task => task.isRoadmapTask && task.phaseName)
+      .map(task => ({
+        id: task.phaseId || '',
+        name: task.phaseName || 'Без названия'
+      }));
+
+    // Удаляем дубликаты по id
+    const uniquePhases = Array.from(
+      new Map(phases.map(phase => [phase.id, phase])).values()
+    );
+
+    return uniquePhases;
+  }
+
   const getTasksByStatus = (status: 'TODO' | 'IN_PROGRESS' | 'DONE') => {
-    return tasks.filter(task => task.status === status)
+    // Сначала применяем фильтрацию по типу задач (обычные/дорожная карта)
+    let filteredTasks = showRoadmapTasks ?
+      tasks :
+      tasks.filter(task => !task.isRoadmapTask);
+
+    // Затем применяем фильтр по фазе, если выбрана конкретная фаза
+    if (selectedPhase !== 'all') {
+      filteredTasks = filteredTasks.filter(task =>
+        task.isRoadmapTask && task.phaseId === selectedPhase
+      );
+    }
+
+    // И наконец фильтруем по статусу
+    return filteredTasks.filter(task => task.status === status);
   }
 
   const getPriorityClass = (priority: number) => {
@@ -188,6 +367,34 @@ export default function TasksPage() {
     }
   }
 
+  // Функция для безопасного отображения артефактов с проверкой на undefined
+  const renderArtifactLinks = (artifactLinks) => {
+    if (!artifactLinks || artifactLinks.length === 0) return null;
+
+    return (
+      <div className="mt-2">
+        <div className="text-xs text-gray-500 mb-1">Артефакты:</div>
+        <div className="flex flex-wrap gap-1">
+          {artifactLinks.map(link => {
+            // Проверяем, существует ли артефакт
+            if (!link || !link.artifact) return null;
+
+            return (
+              <Link
+                key={link.id}
+                href={`/dashboard/projects/${projectId}/artifacts#${link.artifact.id}`}
+                className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded hover:bg-blue-100"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {link.artifact.name || 'Артефакт'}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   if (loading && retryCount === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -200,12 +407,54 @@ export default function TasksPage() {
     <div>
       <div className="mb-6 flex justify-between items-center">
         <h3 className="text-lg font-medium text-gray-900">Задачи проекта</h3>
-        <button
-          onClick={() => setIsAddingTask(!isAddingTask)}
-          className="btn"
-        >
-          {isAddingTask ? 'Отменить' : '+ Новая задача'}
-        </button>
+        <div className="flex gap-3 items-center">
+          <div className="flex items-center mr-4">
+            <input
+              id="showRoadmapTasks"
+              type="checkbox"
+              checked={showRoadmapTasks}
+              onChange={() => {
+                setShowRoadmapTasks(!showRoadmapTasks);
+                // Сбросить фильтр по фазе, если скрываем задачи дорожной карты
+                if (showRoadmapTasks) {
+                  setSelectedPhase('all');
+                }
+              }}
+              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            />
+            <label htmlFor="showRoadmapTasks" className="ml-2 text-sm text-gray-700">
+              Задачи дорожной карты
+            </label>
+          </div>
+
+          {showRoadmapTasks && (
+            <div className="flex items-center mr-4">
+              <label htmlFor="phaseFilter" className="mr-2 text-sm text-gray-700">
+                Фаза:
+              </label>
+              <select
+                id="phaseFilter"
+                value={selectedPhase}
+                onChange={(e) => setSelectedPhase(e.target.value)}
+                className="text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              >
+                <option value="all">Все фазы</option>
+                {getUniquePhases().map(phase => (
+                  <option key={phase.id} value={phase.id}>
+                    {phase.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <button
+            onClick={() => setIsAddingTask(!isAddingTask)}
+            className="btn"
+          >
+            {isAddingTask ? 'Отменить' : '+ Новая задача'}
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -359,19 +608,54 @@ export default function TasksPage() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="bg-white p-3 rounded-md shadow mb-3"
+                            className={`bg-white p-3 rounded-md shadow mb-3 ${task.isRoadmapTask ? 'border-l-4 border-indigo-500' : ''} hover:shadow-md cursor-pointer`}
+                            onClick={() => handleTaskClick(task)}
                           >
                             <div className="font-medium">{task.title}</div>
-                            <div className="mt-2 flex justify-between items-center">
+                            
+                            {task.isRoadmapTask && task.phaseName && (
+                              <div className="mt-1 text-xs text-gray-500">
+                                Фаза: {task.phaseName}
+                              </div>
+                            )}
+                            
+                            {task.description && (
+                              <div className="mt-1 text-sm text-gray-600 line-clamp-2">
+                                {task.description}
+                              </div>
+                            )}
+                            
+                            <div className="mt-2 flex flex-wrap gap-2 items-center">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityClass(task.priority)}`}>
                                 {getPriorityLabel(task.priority)}
                               </span>
+                              
                               {task.dueDate && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
                                   {new Date(task.dueDate).toLocaleDateString()}
                                 </span>
                               )}
+                              
+                              {task.estimatedHours && (
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {task.actualHours ? `${task.actualHours}/${task.estimatedHours}ч` : `${task.estimatedHours}ч`}
+                                </span>
+                              )}
+                              
+                              {task.isRoadmapTask && (
+                                <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
+                                  Дорожная карта
+                                </span>
+                              )}
                             </div>
+                            
+                            {task.isRoadmapTask && renderArtifactLinks(task.artifactLinks)}
                           </div>
                         )}
                       </Draggable>
@@ -408,19 +692,54 @@ export default function TasksPage() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="bg-white p-3 rounded-md shadow mb-3"
+                            className={`bg-white p-3 rounded-md shadow mb-3 ${task.isRoadmapTask ? 'border-l-4 border-indigo-500' : ''} hover:shadow-md cursor-pointer`}
+                            onClick={() => handleTaskClick(task)}
                           >
                             <div className="font-medium">{task.title}</div>
-                            <div className="mt-2 flex justify-between items-center">
+                            
+                            {task.isRoadmapTask && task.phaseName && (
+                              <div className="mt-1 text-xs text-gray-500">
+                                Фаза: {task.phaseName}
+                              </div>
+                            )}
+                            
+                            {task.description && (
+                              <div className="mt-1 text-sm text-gray-600 line-clamp-2">
+                                {task.description}
+                              </div>
+                            )}
+                            
+                            <div className="mt-2 flex flex-wrap gap-2 items-center">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityClass(task.priority)}`}>
                                 {getPriorityLabel(task.priority)}
                               </span>
+                              
                               {task.dueDate && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
                                   {new Date(task.dueDate).toLocaleDateString()}
                                 </span>
                               )}
+                              
+                              {task.estimatedHours && (
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {task.actualHours ? `${task.actualHours}/${task.estimatedHours}ч` : `${task.estimatedHours}ч`}
+                                </span>
+                              )}
+                              
+                              {task.isRoadmapTask && (
+                                <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
+                                  Дорожная карта
+                                </span>
+                              )}
                             </div>
+                            
+                            {task.isRoadmapTask && renderArtifactLinks(task.artifactLinks)}
                           </div>
                         )}
                       </Draggable>
@@ -457,19 +776,54 @@ export default function TasksPage() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="bg-white p-3 rounded-md shadow mb-3"
+                            className={`bg-white p-3 rounded-md shadow mb-3 ${task.isRoadmapTask ? 'border-l-4 border-indigo-500' : ''} hover:shadow-md cursor-pointer`}
+                            onClick={() => handleTaskClick(task)}
                           >
                             <div className="font-medium">{task.title}</div>
-                            <div className="mt-2 flex justify-between items-center">
+                            
+                            {task.isRoadmapTask && task.phaseName && (
+                              <div className="mt-1 text-xs text-gray-500">
+                                Фаза: {task.phaseName}
+                              </div>
+                            )}
+                            
+                            {task.description && (
+                              <div className="mt-1 text-sm text-gray-600 line-clamp-2">
+                                {task.description}
+                              </div>
+                            )}
+                            
+                            <div className="mt-2 flex flex-wrap gap-2 items-center">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityClass(task.priority)}`}>
                                 {getPriorityLabel(task.priority)}
                               </span>
+                              
                               {task.dueDate && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
                                   {new Date(task.dueDate).toLocaleDateString()}
                                 </span>
                               )}
+                              
+                              {task.estimatedHours && (
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {task.actualHours ? `${task.actualHours}/${task.estimatedHours}ч` : `${task.estimatedHours}ч`}
+                                </span>
+                              )}
+                              
+                              {task.isRoadmapTask && (
+                                <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
+                                  Дорожная карта
+                                </span>
+                              )}
                             </div>
+                            
+                            {task.isRoadmapTask && renderArtifactLinks(task.artifactLinks)}
                           </div>
                         )}
                       </Draggable>
@@ -486,6 +840,233 @@ export default function TasksPage() {
             </div>
           </div>
         </DragDropContext>
+      )}
+
+      {/* Модальное окно задачи */}
+      {isTaskModalOpen && selectedTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    value={editedTask.title || ''}
+                    onChange={(e) => handleTaskFieldChange('title', e.target.value)}
+                    className="text-xl font-bold w-full border-b border-gray-300 focus:border-blue-500 focus:outline-none"
+                  />
+                ) : (
+                  <h3 className="text-xl font-bold">{selectedTask.title}</h3>
+                )}
+                <button onClick={handleCloseModal} className="text-gray-500 hover:text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex gap-2 mb-3">
+                  {isEditMode ? (
+                    <select
+                      value={editedTask.status || 'TODO'}
+                      onChange={(e) => handleTaskFieldChange('status', e.target.value)}
+                      className="px-2 py-1 rounded-full text-xs border border-gray-300"
+                    >
+                      <option value="TODO">К выполнению</option>
+                      <option value="IN_PROGRESS">В работе</option>
+                      <option value="DONE">Выполнено</option>
+                    </select>
+                  ) : (
+                    <>
+                      {selectedTask.status === 'TODO' && (
+                        <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+                          К выполнению
+                        </span>
+                      )}
+                      {selectedTask.status === 'IN_PROGRESS' && (
+                        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                          В работе
+                        </span>
+                      )}
+                      {selectedTask.status === 'DONE' && (
+                        <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                          Выполнено
+                        </span>
+                      )}
+                    </>
+                  )}
+
+                  {isEditMode ? (
+                    <select
+                      value={editedTask.priority || 2}
+                      onChange={(e) => handleTaskFieldChange('priority', parseInt(e.target.value))}
+                      className="px-2 py-1 rounded-full text-xs border border-gray-300"
+                    >
+                      <option value={1}>Низкий</option>
+                      <option value={2}>Средний</option>
+                      <option value={3}>Высокий</option>
+                    </select>
+                  ) : (
+                    <span className={`px-2 py-1 rounded-full text-xs ${getPriorityClass(selectedTask.priority)}`}>
+                      {getPriorityLabel(selectedTask.priority)}
+                    </span>
+                  )}
+
+                  {selectedTask.isRoadmapTask && (
+                    <span className="px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800">
+                      Дорожная карта
+                    </span>
+                  )}
+                </div>
+
+                {selectedTask.isRoadmapTask && selectedTask.phaseName && (
+                  <div className="mb-3">
+                    <span className="text-sm text-gray-600">Фаза: {selectedTask.phaseName}</span>
+                  </div>
+                )}
+
+                {isEditMode ? (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Описание:</label>
+                    <textarea
+                      value={editedTask.description || ''}
+                      onChange={(e) => handleTaskFieldChange('description', e.target.value)}
+                      className="w-full border border-gray-300 rounded-md p-2 h-24"
+                      placeholder="Описание задачи..."
+                    />
+                  </div>
+                ) : (
+                  selectedTask.description && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-gray-700 mb-1">Описание:</h4>
+                      <p className="text-gray-600">{selectedTask.description}</p>
+                    </div>
+                  )
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {isEditMode ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Оценка времени (часы):</label>
+                      <input
+                        type="number"
+                        value={editedTask.estimatedHours || ''}
+                        onChange={(e) => handleTaskFieldChange('estimatedHours', e.target.value ? parseInt(e.target.value) : null)}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                        min="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Фактическое время (часы):</label>
+                      <input
+                        type="number"
+                        value={editedTask.actualHours || ''}
+                        onChange={(e) => handleTaskFieldChange('actualHours', e.target.value ? parseInt(e.target.value) : null)}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                        min="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Срок выполнения:</label>
+                      <input
+                        type="date"
+                        value={editedTask.dueDate ? new Date(editedTask.dueDate).toISOString().split('T')[0] : ''}
+                        onChange={(e) => handleTaskFieldChange('dueDate', e.target.value)}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {selectedTask.estimatedHours && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-1">Оценка времени:</h4>
+                        <p className="text-gray-600">{selectedTask.estimatedHours} часов</p>
+                      </div>
+                    )}
+
+                    {selectedTask.actualHours && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-1">Фактическое время:</h4>
+                        <p className="text-gray-600">{selectedTask.actualHours} часов</p>
+                      </div>
+                    )}
+
+                    {selectedTask.dueDate && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-1">Срок выполнения:</h4>
+                        <p className="text-gray-600">{new Date(selectedTask.dueDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {selectedTask.isRoadmapTask && selectedTask.artifactLinks && selectedTask.artifactLinks.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Связанные артефакты:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTask.artifactLinks.map(link => {
+                      if (!link || !link.artifact) return null;
+                      return (
+                        <Link
+                          key={link.id}
+                          href={`/dashboard/projects/${projectId}/artifacts#${link.artifact.id}`}
+                          className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-md hover:bg-blue-100"
+                        >
+                          {link.artifact.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end mt-8">
+                {isEditMode ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditMode(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 mr-3"
+                      disabled={isSaving}
+                    >
+                      Отмена
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveTask}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? 'Сохранение...' : 'Сохранить'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 mr-3"
+                    >
+                      Закрыть
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleEditMode}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Редактировать
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

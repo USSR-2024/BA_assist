@@ -1,0 +1,175 @@
+{
+  "artifactKeywords": [
+    {
+      "artifactId": "BNS-01",
+      "name": "Business Need Statement",
+      "ruName": "Описание бизнес-потребности",
+      "keywords": ["business need", "problem statement", "project purpose", "business case", "opportunity", "value proposition", "бизнес потребность", "цель проекта"]
+    },
+    {
+      "artifactId": "STK-01",
+      "name": "Stakeholder Map",
+      "ruName": "Карта заинтересованных сторон",
+      "keywords": ["stakeholder", "influence map", "interest matrix", "RACI", "interested parties", "stakeholder analysis", "заинтересованные стороны", "матрица влияния", "анализ стейкхолдеров"]
+    },
+    {
+      "artifactId": "ASIS-01",
+      "name": "AS-IS Process Sketch",
+      "ruName": "Схема текущего процесса",
+      "keywords": ["as-is", "current state", "process flow", "workflow", "current process", "существующий процесс", "текущее состояние", "схема процесса"]
+    },
+    {
+      "artifactId": "RISK-01",
+      "name": "Risk Register",
+      "ruName": "Реестр рисков",
+      "keywords": ["risk", "risk register", "risk assessment", "threat", "mitigation", "risk matrix", "риски", "реестр рисков", "оценка рисков", "снижение рисков"]
+    },
+    {
+      "artifactId": "BCASE-01",
+      "name": "Business Case",
+      "ruName": "Бизнес-обоснование",
+      "keywords": ["business case", "ROI", "justification", "cost benefit", "value assessment", "бизнес обоснование", "рентабельность инвестиций", "оценка выгод"]
+    },
+    {
+      "artifactId": "USM-01",
+      "name": "User Story Map",
+      "ruName": "Карта пользовательских историй",
+      "keywords": ["story map", "user story", "user journey", "карта историй", "пользовательские истории", "карта пути пользователя"]
+    },
+    {
+      "artifactId": "PBK-01",
+      "name": "Product Backlog",
+      "ruName": "Бэклог продукта",
+      "keywords": ["backlog", "product backlog", "user stories", "requirements list", "бэклог", "бэклог продукта", "список требований"]
+    },
+    {
+      "artifactId": "BRD-01",
+      "name": "Business Requirements Document",
+      "ruName": "Документ бизнес-требований",
+      "keywords": ["BRD", "business requirements", "requirements document", "business needs", "документ требований", "бизнес требования"]
+    },
+    {
+      "artifactId": "URS-01",
+      "name": "User Requirements Specification",
+      "ruName": "Спецификация требований пользователя",
+      "keywords": ["user requirements", "URS", "user needs", "functional requirements", "пользовательские требования", "функциональные требования"]
+    },
+    {
+      "artifactId": "UXF-01",
+      "name": "UX Wireframes",
+      "ruName": "UX-прототипы",
+      "keywords": ["wireframe", "mockup", "UI design", "prototype", "screen design", "прототип", "интерфейс", "дизайн экранов", "макет"]
+    },
+    {
+      "artifactId": "ERD-01",
+      "name": "Entity Relationship Diagram",
+      "ruName": "Диаграмма отношений сущностей",
+      "keywords": ["ERD", "data model", "entity relationship", "database schema", "data structure", "модель данных", "схема базы данных", "диаграмма сущностей"]
+    },
+    {
+      "artifactId": "API-01",
+      "name": "API Specification",
+      "ruName": "Спецификация API",
+      "keywords": ["API", "interface", "swagger", "OpenAPI", "REST API", "API contract", "API спецификация", "интерфейс"]
+    },
+    {
+      "artifactId": "SEC-01",
+      "name": "Security & Privacy Assessment",
+      "ruName": "Оценка безопасности и конфиденциальности",
+      "keywords": ["security", "privacy", "GDPR", "compliance", "data protection", "безопасность", "конфиденциальность", "защита данных"]
+    },
+    {
+      "artifactId": "TC-01",
+      "name": "Test Cases",
+      "ruName": "Тестовые сценарии",
+      "keywords": ["test case", "test scenario", "test script", "test plan", "тестовый сценарий", "тестовые случаи", "план тестирования"]
+    },
+    {
+      "artifactId": "QA-01",
+      "name": "QA Report",
+      "ruName": "Отчет о контроле качества",
+      "keywords": ["QA", "quality assurance", "test report", "defect log", "bug report", "quality control", "контроль качества", "отчет тестирования", "журнал дефектов"]
+    },
+    {
+      "artifactId": "UAT-01",
+      "name": "User Acceptance Test Report",
+      "ruName": "Отчет о приемочном тестировании",
+      "keywords": ["UAT", "acceptance testing", "user testing", "acceptance criteria", "приемочное тестирование", "критерии приемки"]
+    },
+    {
+      "artifactId": "SEV-01",
+      "name": "Service & Experience Validation",
+      "ruName": "Валидация сервиса и пользовательского опыта",
+      "keywords": ["service validation", "user experience", "UX validation", "service quality", "валидация сервиса", "проверка пользовательского опыта"]
+    },
+    {
+      "artifactId": "TRN-01",
+      "name": "Training Materials",
+      "ruName": "Учебные материалы",
+      "keywords": ["training", "guide", "tutorial", "user manual", "knowledge transfer", "обучение", "руководство пользователя", "инструкция"]
+    },
+    {
+      "artifactId": "SUPP-01",
+      "name": "Support & Rollout Plan",
+      "ruName": "План поддержки и развертывания",
+      "keywords": ["support plan", "rollout", "deployment plan", "transition plan", "go-live", "план поддержки", "план развертывания", "внедрение"]
+    },
+    {
+      "artifactId": "LN-01",
+      "name": "Lessons Learned",
+      "ruName": "Извлеченные уроки",
+      "keywords": ["lessons learned", "retrospective", "post-mortem", "project review", "извлеченные уроки", "ретроспектива", "обзор проекта"]
+    },
+    {
+      "artifactId": "FDB-01",
+      "name": "Feedback Log",
+      "ruName": "Журнал обратной связи",
+      "keywords": ["feedback", "user feedback", "customer feedback", "обратная связь", "отзывы пользователей", "отзывы заказчика"]
+    },
+    {
+      "artifactId": "GNG-01",
+      "name": "Go/No-Go Decision",
+      "ruName": "Решение о запуске/отмене",
+      "keywords": ["go no-go", "launch decision", "release decision", "launch criteria", "решение о запуске", "критерии запуска"]
+    },
+    {
+      "artifactId": "HC-01",
+      "name": "Hypercare Report",
+      "ruName": "Отчет об усиленной поддержке",
+      "keywords": ["hypercare", "post-launch support", "intensified support", "усиленная поддержка", "поддержка после запуска"]
+    },
+    {
+      "artifactId": "BPMN-01",
+      "name": "BPMN Diagram",
+      "ruName": "BPMN-диаграмма",
+      "keywords": ["BPMN", "business process model", "process diagram", "workflow diagram", "business process diagram", "модель бизнес-процесса", "диаграмма процессов"]
+    },
+    {
+      "artifactId": "KPI-01",
+      "name": "KPI Definition",
+      "ruName": "Определение KPI",
+      "keywords": ["KPI", "metrics", "key performance indicators", "performance measures", "success metrics", "ключевые показатели эффективности", "метрики успеха"]
+    },
+    {
+      "artifactId": "RCA-01",
+      "name": "Root Cause Analysis",
+      "ruName": "Анализ корневых причин",
+      "keywords": ["root cause", "cause and effect", "fishbone", "ishikawa", "5 whys", "корневые причины", "причинно-следственный анализ"]
+    }
+  ],
+  "rules": {
+    "artifactClassification": {
+      "minKeywordMatches": 2,
+      "minConfidence": 0.7,
+      "autoTagEnabled": true
+    },
+    "fileExtensionMapping": {
+      "docx": ["BRD-01", "URS-01", "BCASE-01"],
+      "xlsx": ["RISK-01", "STK-01", "PBK-01", "KPI-01"],
+      "pdf": ["BCASE-01", "SEC-01", "LN-01"],
+      "pptx": ["BPRI-01", "TRN-01", "GNG-01"],
+      "png": ["UXF-01", "ERD-01", "BPMN-01"],
+      "json": ["API-01"]
+    }
+  }
+}

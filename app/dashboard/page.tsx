@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 // Определим тип статуса проекта без прямого импорта из Prisma
-type ProjectStatus = 'ACTIVE' | 'ARCHIVED';
+type ProjectStatus = 'ACTIVE' | 'ARCHIVED' | 'CLOSED' | 'DELETED';
 
 interface Project {
   id: number
@@ -87,11 +87,14 @@ export default function Dashboard() {
     console.log("Текущий фильтр:", filter);
   }, [projects, filter]);
 
-  const filteredProjects = projects && Array.isArray(projects) 
+  const filteredProjects = projects && Array.isArray(projects)
     ? projects.filter(project => {
         console.log(`Проверка проекта ${project.id}, статус: ${project.status}, фильтр: ${filter}`);
-        if (filter === 'ALL') return true
-        return project.status === filter
+        // Не показываем удаленные проекты, кроме случая, когда они явно выбраны
+        if (project.status === 'DELETED' && filter !== 'DELETED') return false;
+
+        if (filter === 'ALL') return project.status !== 'DELETED';
+        return project.status === filter;
       })
     : [];
     
@@ -110,7 +113,7 @@ export default function Dashboard() {
       </div>
 
       <div className="mb-4">
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           <button
             className={`px-3 py-1 rounded-md ${filter === 'ALL' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             onClick={() => setFilter('ALL')}
@@ -118,16 +121,23 @@ export default function Dashboard() {
             Все
           </button>
           <button
-            className={`px-3 py-1 rounded-md ${filter === 'ACTIVE' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            className={`px-3 py-1 rounded-md ${filter === 'ACTIVE' ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
             onClick={() => setFilter('ACTIVE')}
           >
             Активные
           </button>
           <button
-            className={`px-3 py-1 rounded-md ${filter === 'ARCHIVED' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            onClick={() => setFilter('ARCHIVED')}
+            className={`px-3 py-1 rounded-md ${
+              filter === 'CLOSED' || filter === 'ARCHIVED' ? 'bg-yellow-600 text-white' : 'bg-gray-200'}`}
+            onClick={() => setFilter('ARCHIVED')} // Use ARCHIVED until migration is completed
           >
-            Архивные
+            Закрытые
+          </button>
+          <button
+            className={`px-3 py-1 rounded-md ${filter === 'DELETED' ? 'bg-red-600 text-white' : 'bg-gray-200'}`}
+            onClick={() => setFilter('DELETED')}
+          >
+            Удаленные
           </button>
         </div>
       </div>
@@ -191,9 +201,25 @@ export default function Dashboard() {
               )}
               <div className="flex justify-between items-center">
                 <span className={`text-sm px-2 py-1 rounded-full ${
-                  project.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  project.status === 'ACTIVE'
+                    ? 'bg-green-100 text-green-800'
+                    : project.status === 'CLOSED'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : project.status === 'DELETED'
+                    ? 'bg-red-100 text-red-800'
+                    : project.status === 'ARCHIVED'
+                    ? 'bg-yellow-100 text-yellow-800' // Display ARCHIVED as closed for now
+                    : 'bg-gray-100 text-gray-800'
                 }`}>
-                  {project.status === 'ACTIVE' ? 'Активный' : 'Архивный'}
+                  {project.status === 'ACTIVE'
+                    ? 'Активный'
+                    : project.status === 'CLOSED'
+                    ? 'Закрытый'
+                    : project.status === 'DELETED'
+                    ? 'Удаленный'
+                    : project.status === 'ARCHIVED'
+                    ? 'Закрытый' // Display ARCHIVED as closed for now
+                    : 'Архивный'}
                 </span>
                 <span className="text-sm text-gray-500">
                   {new Date(project.createdAt).toLocaleDateString('ru-RU')}

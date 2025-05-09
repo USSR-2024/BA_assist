@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import InviteUserModal from '@/app/components/modals/InviteUserModal'
+import ProjectManageModal from '@/app/components/modals/ProjectManageModal'
 
 interface Project {
   id: number
@@ -25,6 +26,7 @@ export default function ProjectLayout({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false)
   const pathname = usePathname()
   
   const projectId = params.id
@@ -81,6 +83,8 @@ export default function ProjectLayout({
     if (pathname.includes('/chat')) return 'chat'
     if (pathname.includes('/tasks')) return 'tasks'
     if (pathname.includes('/artifacts')) return 'artifacts'
+    if (pathname.includes('/roadmap')) return 'roadmap'
+    if (pathname.includes('/frameworks')) return 'frameworks'
     // Точное совпадение пути с /dashboard/projects/{id} означает страницу обзора
     if (pathname === `/dashboard/projects/${projectId}`) return 'overview'
     return 'overview'
@@ -141,16 +145,40 @@ export default function ProjectLayout({
               </div>
               <div className="flex items-center space-x-3">
                 <span className={`px-3 py-1 rounded-full text-sm ${
-                  project.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  project.status === 'ACTIVE'
+                    ? 'bg-green-100 text-green-800'
+                    : project.status === 'CLOSED'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : project.status === 'DELETED'
+                    ? 'bg-red-100 text-red-800'
+                    : project.status === 'ARCHIVED'
+                    ? 'bg-yellow-100 text-yellow-800' // Display ARCHIVED as closed for now
+                    : 'bg-gray-100 text-gray-800'
                 }`}>
-                  {project.status === 'ACTIVE' ? 'Активный' : 'Архивный'}
+                  {project.status === 'ACTIVE'
+                    ? 'Активный'
+                    : project.status === 'CLOSED'
+                    ? 'Закрытый'
+                    : project.status === 'DELETED'
+                    ? 'Удаленный'
+                    : project.status === 'ARCHIVED'
+                    ? 'Закрытый' // Display ARCHIVED as closed for now
+                    : 'Архивный'}
                 </span>
-                <button 
-                  onClick={() => setIsInviteModalOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm"
-                >
-                  Пригласить участника
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setIsInviteModalOpen(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm"
+                  >
+                    Пригласить участника
+                  </button>
+                  <button
+                    onClick={() => setIsManageModalOpen(true)}
+                    className="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded-md text-sm"
+                  >
+                    Управление
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -196,15 +224,35 @@ export default function ProjectLayout({
                 >
                   Задачи
                 </Link>
-                <Link 
+                <Link
                   href={`/dashboard/projects/${projectId}/artifacts`}
                   className={`px-4 py-2 border-b-2 font-medium text-sm ${
-                    activeTab === 'artifacts' 
-                      ? 'border-blue-500 text-blue-600' 
+                    activeTab === 'artifacts'
+                      ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
                   Артефакты
+                </Link>
+                <Link
+                  href={`/dashboard/projects/${projectId}/roadmap`}
+                  className={`px-4 py-2 border-b-2 font-medium text-sm ${
+                    activeTab === 'roadmap'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Дорожная карта
+                </Link>
+                <Link
+                  href={`/dashboard/projects/${projectId}/frameworks`}
+                  className={`px-4 py-2 border-b-2 font-medium text-sm ${
+                    activeTab === 'frameworks'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Фреймворки
                 </Link>
               </nav>
             </div>
@@ -227,10 +275,19 @@ export default function ProjectLayout({
       
       {/* Модальное окно для приглашения пользователей */}
       {isInviteModalOpen && (
-        <InviteUserModal 
-          projectId={Number(projectId)} 
-          isOpen={isInviteModalOpen} 
-          onClose={() => setIsInviteModalOpen(false)} 
+        <InviteUserModal
+          projectId={Number(projectId)}
+          isOpen={isInviteModalOpen}
+          onClose={() => setIsInviteModalOpen(false)}
+        />
+      )}
+
+      {/* Модальное окно для управления проектом */}
+      {isManageModalOpen && project && (
+        <ProjectManageModal
+          project={project}
+          isOpen={isManageModalOpen}
+          onClose={() => setIsManageModalOpen(false)}
         />
       )}
     </div>

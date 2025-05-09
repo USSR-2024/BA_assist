@@ -1,0 +1,160 @@
+{
+  "tasks": [
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL1",
+      "taskId": "PMBOK-INI-01",
+      "name": "Project Charter Development",
+      "ruName": "Разработка устава проекта",
+      "description": "Create a project charter that formally authorizes the project and documents initial requirements.",
+      "ruDescription": "Создание устава проекта, который формально авторизует проект и документирует первоначальные требования.",
+      "estimatedHours": 10,
+      "priority": "HIGH",
+      "artifactId": "CHARTER"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL1",
+      "taskId": "PMBOK-INI-02",
+      "name": "Stakeholder Identification",
+      "ruName": "Идентификация заинтересованных сторон",
+      "description": "Identify all project stakeholders and document their interests, involvement, and impact on project success.",
+      "ruDescription": "Определение всех заинтересованных сторон проекта и документирование их интересов, вовлеченности и влияния на успех проекта.",
+      "estimatedHours": 8,
+      "priority": "HIGH",
+      "artifactId": "STK-REG"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL2",
+      "taskId": "PMBOK-PLN-01",
+      "name": "Scope Definition",
+      "ruName": "Определение содержания",
+      "description": "Define what is included and excluded from the project scope, including deliverables, constraints, and assumptions.",
+      "ruDescription": "Определение того, что включено и исключено из содержания проекта, включая результаты, ограничения и допущения.",
+      "estimatedHours": 12,
+      "priority": "HIGH",
+      "artifactId": "SCP-STMT"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL2",
+      "taskId": "PMBOK-PLN-02",
+      "name": "Work Breakdown Structure Creation",
+      "ruName": "Создание иерархической структуры работ",
+      "description": "Develop a WBS that subdivides project deliverables into smaller, more manageable components.",
+      "ruDescription": "Разработка ИСР, которая подразделяет результаты проекта на более мелкие, управляемые компоненты.",
+      "estimatedHours": 15,
+      "priority": "HIGH",
+      "artifactId": "WBS"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL2",
+      "taskId": "PMBOK-PLN-03",
+      "name": "Schedule Development",
+      "ruName": "Разработка расписания",
+      "description": "Develop a project schedule that includes activity durations, dependencies, and resource assignments.",
+      "ruDescription": "Разработка расписания проекта, включающего длительность активностей, зависимости и назначение ресурсов.",
+      "estimatedHours": 12,
+      "priority": "MEDIUM",
+      "artifactId": "SCHEDULE"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL2",
+      "taskId": "PMBOK-PLN-04",
+      "name": "Risk Identification and Planning",
+      "ruName": "Идентификация рисков и планирование",
+      "description": "Identify potential risks and develop response strategies.",
+      "ruDescription": "Выявление потенциальных рисков и разработка стратегий реагирования.",
+      "estimatedHours": 10,
+      "priority": "MEDIUM",
+      "artifactId": "RISK-REG"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL3",
+      "taskId": "PMBOK-EXE-01",
+      "name": "Project Team Formation",
+      "ruName": "Формирование команды проекта",
+      "description": "Assemble and develop the project team, including defining roles and responsibilities.",
+      "ruDescription": "Формирование и развитие команды проекта, включая определение ролей и обязанностей.",
+      "estimatedHours": 8,
+      "priority": "HIGH",
+      "artifactId": "TEAM-CHART"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL3",
+      "taskId": "PMBOK-EXE-02",
+      "name": "Communications Management",
+      "ruName": "Управление коммуникациями",
+      "description": "Manage project information, ensuring it reaches the right stakeholders at the right time.",
+      "ruDescription": "Управление информацией проекта, обеспечивая её доставку нужным заинтересованным сторонам в нужное время.",
+      "estimatedHours": 6,
+      "priority": "MEDIUM",
+      "artifactId": "COMM-PLAN"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL3",
+      "taskId": "PMBOK-EXE-03",
+      "name": "Quality Assurance",
+      "ruName": "Обеспечение качества",
+      "description": "Implement planned quality activities to ensure the project meets quality requirements.",
+      "ruDescription": "Внедрение запланированных мероприятий по качеству для обеспечения соответствия проекта требованиям к качеству.",
+      "estimatedHours": 10,
+      "priority": "HIGH",
+      "artifactId": "QA-REPORT"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL4",
+      "taskId": "PMBOK-MON-01",
+      "name": "Performance Tracking",
+      "ruName": "Отслеживание выполнения",
+      "description": "Monitor project performance against the project management plan and identify variances.",
+      "ruDescription": "Мониторинг выполнения проекта относительно плана управления проектом и выявление отклонений.",
+      "estimatedHours": 8,
+      "priority": "HIGH",
+      "artifactId": "PERF-REP"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL4",
+      "taskId": "PMBOK-MON-02",
+      "name": "Change Control",
+      "ruName": "Контроль изменений",
+      "description": "Review all change requests, approve changes, and update project documentation accordingly.",
+      "ruDescription": "Рассмотрение всех запросов на изменение, утверждение изменений и обновление документации проекта.",
+      "estimatedHours": 6,
+      "priority": "MEDIUM",
+      "artifactId": "CHG-LOG"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL4",
+      "taskId": "PMBOK-CLS-01",
+      "name": "Project Closure Documentation",
+      "ruName": "Документация о закрытии проекта",
+      "description": "Finalize all activities to formally close the project or phase, including documentation of lessons learned.",
+      "ruDescription": "Завершение всех работ для формального закрытия проекта или фазы, включая документирование извлеченных уроков.",
+      "estimatedHours": 10,
+      "priority": "MEDIUM",
+      "artifactId": "CLOSE-DOC"
+    },
+    {
+      "frameworkId": "FR-PMBLITE",
+      "phaseId": "PL4",
+      "taskId": "PMBOK-CLS-02",
+      "name": "Stakeholder Satisfaction Assessment",
+      "ruName": "Оценка удовлетворенности заинтересованных сторон",
+      "description": "Evaluate stakeholder satisfaction with project deliverables and outcomes.",
+      "ruDescription": "Оценка удовлетворенности заинтересованных сторон результатами и исходами проекта.",
+      "estimatedHours": 8,
+      "priority": "MEDIUM",
+      "artifactId": "STK-SATIS"
+    }
+  ]
+}
